@@ -28,11 +28,18 @@ if [ ! -d $backup_destination_dir ]; then
   mkdir -p $backup_destination_dir
 fi
 
-# Backup nextcloud data dir
-echo "Starting nextcloud data backup"
-tar -cpzf /tmp/backup/NextcloudBackup_FileDir_`date +"%Y%m%d-%H-%M-%S"`.tar.gz -C "$nextcloud_data_dir" .
+# Do backup
+echo "Starting nextcloud file directory backup"
+tar -cpzf /tmp/backup/NextcloudBackup_FileDir_`date +"%Y%m%d-%H-%M-%S"`.tar.gz -C "$nextcloud_file_dir" .
+echo "Finished nextcloud file directory backup"
 
+echo "Starting nextcloud data directory backup"
+tar -cpzf /tmp/backup/NextcloudBackup_DataDir_`date +"%Y%m%d"`.tar.gz -C "$nextcloud_data_dir" .
+echo "Finished nextcloud data directory backup"
 
+echo "Starting nextcloud db backup"
+mysqldump --single-transaction -h localhost -u "$nextcloud_db_user" -p "$nextcloud_db_password" "$nextcloud_db" > /tmp/backup/NextcloudBackup_DB_`date +"%Y%m%d"`.sql
+echo "Finished nextcloud db backup"
 
 
 # Disable nextcloud maintenance mode
